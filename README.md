@@ -49,6 +49,7 @@ The large per-pair classification files pairpass.json (4.4 MB) and pairpass_2000
 * CYCLE1.md, CYCLE2.md, CYCLE3.md: the three proof cycle reports, written only from verifier certified files.
 * REFEREE.md: the referee report on the literature closure of the region j ≤ 3i/2.
 * EXTERNAL_CLAIMS_2026-10-29.md: the grading of external claims found on the problem thread, with the verified and cited distinction kept throughout.
+* EXTERNAL_CLAIMS_ADDENDUM_2026-10-30.md: a graded addendum covering a later claim recorded in the erdosproblems.ai catalog (Plasma AI, 2026-10-19), graded as unverified, with its interaction with the results here spelled out.
 * TOKENS.md, TOKENS2.md, TOKENS3.md: the run and token ledgers for the three cycles, with their honesty caveats.
 * price_appendixA.py: Price's Appendix A code, run by this campaign (666 endpoint checks reproduced).
 * paper/paper.tex (PDF: paper/paper.pdf): the consolidated paper style write-up of the partial results.
