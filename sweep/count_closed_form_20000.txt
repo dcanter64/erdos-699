@@ -1,0 +1,2 @@
+self-check: closed form == direct per-n summation for all n <= 2000
+open-region triples with 2 <= n <= 20000: 222188892222

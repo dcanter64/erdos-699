@@ -1,0 +1,579 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\usepackage{enumitem}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\Vi}{V_i(n)}
+\newcommand{\Vthree}{V_3(n)}
+\newcommand{\LDthree}{\ensuremath{\mathrm{(LD3)}}}
+\newcommand{\LDthreeplus}{\ensuremath{\mathrm{(LD3^+)}}}
+\newcommand{\RESthree}{\ensuremath{\mathrm{(RES\text{-}3)}}}
+
+\title{Partial progress on Erd\H{o}s Problem \#699: the region $j<2i$, the line $j=2i$ for large $i$, and the residual case $i=3$}
+\author{Meta Muse\\ prompted by Dennis Canter}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This paper reports partial progress on Erd\H{o}s Problem \#699 and nothing more. The problem, which asks whether $\binom{n}{i}$ and $\binom{n}{j}$ always share a prime factor at least $i$ for $1\le i<j\le n/2$, remains open, and no proof of the conjecture is claimed here. Building on the theorem of Ecklund, Eggleton, Erd\H{o}s and Selfridge from 1978, on Price's closure of the range $j\le 3i/2$ and of the central case $n=2j$, and on work of Van Doorn and Rocca, we record what a three cycle verification campaign has certified. The regime $3i/2<j<2i$ is closed for every $i$, so with Price's work the conjecture holds for all $j<2i$. The boundary line $j=2i$ is a separate case, closed for $i\ge 1.2\times 10^8$. In the finite scope $i\le 1000$, $\lfloor 3i/2\rfloor<j\le 5000$, exactly $3{,}919{,}306$ of $4{,}249{,}500$ pairs are fully cleared, with $330{,}194$ partial pairs remaining, all at $4\le i\le 113$. For $i=3$ the odd case is closed, the band $T\le 16$ is closed for all $j$, the $2$-adic condition is characterised exactly, and any counterexample must have $n$ even, $n>10^8$, $j\ge 50{,}001$ and $T\ge 17$ and must satisfy the residual system stated in Section 5. Two exhaustive sweeps found no counterexample among $27{,}769{,}446{,}111$ triples with $n\le 10{,}000$ and none among $222{,}188{,}892{,}222$ triples with $n\le 20{,}000$. Every result is stated with its dependencies, distinguishing unconditional arguments, arguments modulo the 1978 theorem, arguments resting on cited explicit estimates at the verification level recorded in the campaign files, and verified computation.
+\end{abstract}
+
+\section{Introduction}
+
+\subsection{The problem}
+
+Erd\H{o}s Problem \#699 asks the following question, in the form recorded on the problem page and confirmed in the campaign's Phase 0 record \texttt{sweep/PHASE0.md}.
+
+\begin{quote}
+Is it true that for every $1\le i<j\le n/2$ there exists a prime $p\ge i$ such that $p$ divides both $\binom{n}{i}$ and $\binom{n}{j}$?
+\end{quote}
+
+The problem is attributed on the page to Erd\H{o}s and Szekeres. Throughout this paper $C(n,k)$ denotes $\binom{n}{k}$. A triple $(n,i,j)$ with $1\le i<j\le n/2$ and $\gcd(C(n,i),C(n,j))$ having no prime factor at least $i$ is called a counterexample. The conjecture is that no counterexample exists.
+
+The problem remains open. The purpose of this paper is to consolidate, in conventional form, the partial results certified by the campaign described in \texttt{CYCLE1.md}, \texttt{CYCLE2.md} and \texttt{CYCLE3.md}, together with the literature those reports grade in \texttt{EXTERNAL\_CLAIMS\_2026-10-29.md} and the refereeing recorded in \texttt{REFEREE.md}. Where a proof is long, we sketch it faithfully and point to the repository file containing the full argument and to the independent verification of that argument. Where the certified files give only a statement and a pointer, we state the theorem with its dependencies and give the pointer, and we do not invent intermediate steps.
+
+Three conventions govern the whole paper. First, every theorem carries an explicit dependency label. Second, computation is labelled as computation and is never presented as a proof in kind. Third, the distinction between a result verified against a primary source and a result taken on citation at secondary level is preserved exactly as the campaign files record it, in particular in \texttt{verification/primary\_sources\_c2.md}.
+
+\subsection{The 1978 foundation}
+
+Write $C(n,i)=uv$, where every prime factor of $u$ is less than $i$ and every prime factor of $v$ is at least $i$. Ecklund, Eggleton, Erd\H{o}s and Selfridge proved in 1978 that $u<v$ holds with exactly $12$ exceptions, which they determined \cite{EEES78}. In the notation of Section 2, $v=V_i(n)$, so the theorem says
+\[
+V_i(n) > C(n,i)^{1/2}
+\]
+except at exactly $12$ pairs $(n,i)$, namely
+\[
+(8,3),\ (9,4),\ (10,5),\ (12,5),\ (21,7),\ (21,8),\ (30,7),\ (33,13),\ (33,14),\ (36,13),\ (36,17),\ (56,13).
+\]
+The list was recovered from the paper, corroborated by later restatements, and confirmed exactly by two independent computations in Phase 0: a scan to $n\le 240$ and an enumeration to $n\le 400$ each produced precisely these $12$ pairs and no others. The convention matters. The same paper treats the other splitting, with primes at most $k$ against primes greater than $k$, and finds $19$ cases with only finiteness proved. That is a different input and must not be substituted. Referee 2's convention audit in \texttt{REFEREE.md} shows that the distinction between at least $i$ and greater than $i$ is load bearing at exactly the reformulation and the 1978 input: under the strict convention the reformulation becomes the strengthened variant of the problem, which is false, with witness $(n,i,j)=(28,5,14)$, where $\gcd(V_{\ge 5}(28),C(28,14))=5$ but $\gcd(V_{>5}(28),C(28,14))=1$.
+
+Almost every analytic result in this paper is modulo this 1978 theorem, cited as a published theorem whose proof was not re-refereed. Its statement, convention and exception list were verified. Results that do not use it are labelled unconditional.
+
+\subsection{Price's closure of $j\le 3i/2$ and of $n=2j$}
+
+Price's manuscript \cite{Price} proves the conjecture for $j\le 3i/2$ and for the central case $n=2j$. The campaign's relationship to the first of these is worth stating carefully, because it illustrates the verification standard used throughout.
+
+Cycle 1 refereed Bloom's exposition of the argument, not the raw proof claim, whose text was inaccessible to automated fetching. Two independent referees and the coordinator reconstructed the exposition end to end and found no error in the deduction for $j\le 3i/2$, conditional on the 1978 theorem. One material gap was found in the exposition: it never names or discharges the $12$ exception pairs, and at an exception pair the input inequality fails in the opposite direction. The exhibit is $(n,i,j)=(8,3,4)$, where $v=7$, $v^2=49<56=C(8,3)$. The gap was closed externally at that stage by direct computation: all $41$ exception triples, $27$ inside the region $j\le 3i/2$ and $14$ outside, with $(9,4)$ and $(10,5)$ vacuous, were verified directly, four independent times, with all gcds greater than $1$. The full record is \texttt{REFEREE.md}.
+
+The addendum to \texttt{REFEREE.md}, written after the principal retrieved Price's original manuscript, resolves the point completely. The gap was exposition only. Price's text contains Lemma 1.3, which discharges every exceptional pair explicitly: $(9,4)$ and $(10,5)$ admit no admissible $j$, and the remaining ten pairs are handled by terminal primes. The prime table is identical, entry for entry, to the discharge the campaign's Phase 0 verification produced independently. The $j\le 3i/2$ closure is therefore sound as written in the original, not merely modulo an external patch.
+
+The same addendum retires the campaign's earlier finding on $n=2j$. Bloom's exposition does not address that case, and the exposited method provably cannot prove it for $j>3i/2$, because $C(2j,2(j-i))>C(2j,i)$ for all $j>3i/2$, with smallest witness $C(4,1)=4<6=C(4,2)$. Price's original, however, proves the central case in full as Proposition 3.3, through a central compression lemma, a Vandermonde argument in the even case, reduction for odd composite $i$, and an analytic argument together with an exact finite computation for odd prime $i$. The appendix code for the finite part was transcribed and run by the campaign: it reproduces the manuscript's certificate exactly, with $666$ endpoint checks passing. The analytic branch for large parameters was read and is coherent in structure; its individual explicit estimates were not each re-derived in that pass. This is recorded here at exactly that verification level.
+
+Price's Proposition 4.1 is used repeatedly below, especially for $i=3$. In the form extracted and verified in Cycle 2, it says that for a counterexample with $n=Qj+R$ in Euclidean division, $V_i(n)$ divides $\Lambda_i(T)\binom{j}{h}$, where $T=R+(Q-1)(i-1)$, $h=\max(0,\lceil (i-R)/Q\rceil)$, and $\Lambda_i(T)$ is the part of $\mathrm{lcm}(1,\dots,T)$ composed of primes at least $i$; moreover $C(n,i)<(\Lambda_i(T)\binom{j}{h})^2$. The exact statement should be taken from the manuscript; the campaign's extraction is in \texttt{proofs/P-F1.md} and \texttt{proofs/P-F2.md}, verified in \texttt{verification/V-F.md}.
+
+\subsection{Van Doorn and Rocca}
+
+Van Doorn and Rocca's partial progress paper \cite{VDRpartial} follows Price throughout. As graded in \texttt{EXTERNAL\_CLAIMS\_2026-10-29.md}, its structure is as follows. The cases $i=1$ and $i=2$ are empty, in agreement with the campaign's unconditional closures in Section 3.1. The set of bad triples with $i\ge 1476$ is empty, by an orbit polynomial and Jacobi discriminant argument with confinement from prime estimates and a terminal prime from published prime gap tables and an interval theorem of Axler. The band $4\le i\le 1475$ is finite but ineffective, through fat point divisors and a theorem on $S$ parts. The case $i=3$ is left open. Their diagnosis of that case is important and is confirmed at every step of Cycle 3: exponent only arguments would need a certain ratio below $2$, and a completion must retain the labels recording which of $n$, $n-1$, $n-2$ supplies each prime power, not just aggregate size.
+
+The campaign verified the checkable core of that paper exactly. The degree $17$ certificate for $i=4$ expands symbolically with the claimed vanishing order; the line arrangement identity was checked exhaustively for every $i$ from $5$ to $1475$; a Kummer localisation lemma was tested on $6{,}339$ random instances with zero failures; the terminal prime table was verified entry by entry; and the tail confinement arithmetic was checked. Not covered by those checks were the Jacobi discriminant identity itself, the $S$ part theorem, and the published gap tables, all taken on citation. An audited revision under Rocca's sole authorship contains the same proofs, constants and tables; the verification results apply to both versions unchanged.
+
+Their second paper \cite{VDRstrict} concerns the strict variant, in which a common prime strictly greater than $i$ is required. That is a different finish line. For $i\ge 4$ it proves that only finitely many triples have largest prime factor of $\gcd(C(n,i),C(n,j))$ at most $i$, and it states explicitly that $i=3$ is untouched, in the sense that a gcd that is a power of two infinitely often cannot even be excluded there. Exceptions for the strict variant can be entirely consistent with Problem \#699 itself, since a common prime equal to $i$ settles \#699 and fails the strict variant. The unique known strict counterexample at $i\ge 4$ recorded in the files, $\gcd(C(28,5),C(28,14))=2^3\cdot 3^3\cdot 5=1080$, originates with Erd\H{o}s and Szekeres and is catalogued as problem B31 in Guy's book \cite{Guy}; the campaign verified that gcd exactly.
+
+If both Van Doorn and Rocca claims hold, Problem \#699 is reduced to $i=3$ plus a finite ineffective band at $4\le i\le 1475$. It is still not solved. The campaign's contribution is complementary: explicit exclusions, effective regions, and a complete map of $i=3$ short of closure.
+
+\subsection{Three forum contributions, graded}
+
+Del Pin gave a Vandermonde free variant of Price's argument: if $C(2j,i)\ge C(j,i)^2$ then $(n,i)$ outside the 1978 exceptions is good for all $n\ge 2j$. The campaign verified this completely. The ratio formula for $F(j)=C(2j,i)/C(j,i)^2$ is exact on $300$ random pairs, $F$ is strictly decreasing, the values $J_1(3)=5$, $J_1(5)=8$, $J_1(640)=962$ and $J_1(5000)=7503$ are exactly as stated, and the $12$ exception pairs admit exactly $29$ triples satisfying the hypothesis, all good by direct gcd computation. A consequence is that the pair $(3,5)$ is settled for all $n$.
+
+MaxDKaos proposed a criterion combining the elementary bound $U_i(n)\le n^{\pi(i-1)}$ with prime free interval data. The campaign verified the lemma and the crossing at $i=9$, and computed the first gap data from raw gaps. The headline tabulated values, however, use a sharp form of the cut off that is not printed in the comment, and Cycle 2 subjected them to an independent reimplementation, reported in Section 3.5. The outcome is negative: under every natural reconstruction tested, the table does not reproduce, and only the entry $(3,5)$ is credited. The details and the exact computed values are in \texttt{verification/maxdkaos\_reimplementation.md}, audited in \texttt{verification/V-U.md}.
+
+Cong carried out an independent verification in Rust to $n=10^7$, finding no counterexamples, together with targeted families $n=2^k$ and $n=3^m+1$. His complete list of nine strict variant failures in range was verified by the campaign digit for digit, by factoring $C(n,i)$ and using Legendre valuations for $C(n,j)$. His sweep independently corroborates the campaign's sweeps far beyond their range in $n$, although, being a sweep in $n$ alone, it does not by itself clear pairs for all $n$.
+
+\subsection{Plan of the paper}
+
+Section 2 gives the definitions, the key lemma and the per pair finite reduction. Section 3 states the main theorems by region, each with its dependencies and a proof sketch or a repository pointer. Section 4 describes the computations. Section 5 states the residual exactly, first for $i=3$ and then for the whole problem, and records what a finishing proof must supply, following \texttt{CYCLE3.md} Section 10. Section 6 is a short verification and reproducibility note.
+
+
+\section{Preliminaries and the finite reduction}
+
+\subsection{The large part $V_i(n)$}
+
+\begin{definition}
+For $1\le i\le n/2$, write $C(n,i)=u\cdot v$ where every prime factor of $u$ is less than $i$ and every prime factor of $v$ is at least $i$. Set $V_i(n)=v$. If $C(n,i)$ has no prime factor at least $i$ then $V_i(n)=1$.
+\end{definition}
+
+The prime divisors of $V_i(n)$ are exactly the primes at least $i$ dividing $C(n,i)$. Hence a prime $p\ge i$ divides both $C(n,i)$ and $C(n,j)$ if and only if $\gcd(V_i(n),C(n,j))>1$. The equivalence also holds when $V_i(n)=1$, both sides then failing together. Problem \#699 is therefore the statement that $\gcd(V_i(n),C(n,j))>1$ for all $1\le i<j\le n/2$. This reformulation is Bloom's; the original statement is not phrased through $V_i(n)$, a presentational point recorded in \texttt{sweep/PHASE0.md} Item 1.
+
+The 1978 theorem of \cite{EEES78} in this notation is the following.
+
+\begin{theorem}[EEES78, cited]
+\label{thm:eees}
+Let $n\ge 2i$. Then $V_i(n)>C(n,i)^{1/2}$ except for exactly the $12$ pairs listed in Section 1.2, at which $V_i(n)\le C(n,i)^{1/2}$.
+\end{theorem}
+
+Dependencies: published theorem, taken on citation. Its statement, convention and exception list were verified against the paper and by independent computation, as described in Section 1.2. Its proof was not re-refereed.
+
+\subsection{The key lemma}
+
+\begin{lemma}[Key lemma]
+\label{lem:key}
+If $d\mid C(n,i)$ and $\gcd(d,C(n,j))=1$ then $d\mid C(j,i)$.
+\end{lemma}
+
+\begin{proof}
+Both sides of $C(n,i)C(n-i,j-i)=C(n,j)C(j,i)$ count the ways to choose an $i$ subset of an $n$ element set and then a disjoint subset of size $j-i$. Since $d\mid C(n,i)$, $d$ divides $C(n,j)C(j,i)$, and $\gcd(d,C(n,j))=1$ gives $d\mid C(j,i)$ by Euclid's lemma.
+\end{proof}
+
+Dependencies: unconditional. The identity was verified on all $568{,}820$ triples with $n\le 240$ in Phase 0, and the strong form of the lemma, that the part of $V_i(n)$ coprime to $C(n,j)$ divides $C(j,i)$, was verified on the same set.
+
+Applied with $d=V_i(n)$ under the assumption that $(n,i,j)$ is a counterexample, the lemma gives $V_i(n)\mid C(j,j-i)$, hence $V_i(n)\le C(j,j-i)$.
+
+\subsection{The per pair finite reduction}
+
+\begin{theorem}[Finite reduction, per pair]
+\label{thm:reduction}
+Fix $i<j$. Suppose $(n,i)$ is not one of the $12$ exception pairs of Theorem \ref{thm:eees} and $(n,i,j)$ is a counterexample. Then
+\[
+C(n,i) < C(2j,\,2(j-i)).
+\]
+Consequently, with
+\[
+N(i,j) := \max\{\,n : C(n,i) < C(2j,\,2(j-i))\,\},
+\]
+every counterexample with $(n,i)$ not an exception pair satisfies $2j\le n\le N(i,j)$. The pair $(i,j)$ is therefore settled for all $n$ once every $n$ in the finite interval $[2j,N(i,j)]$ has been checked directly, together with the exception values of $n$ for that $i$.
+\end{theorem}
+
+\begin{proof}
+By Theorem \ref{thm:eees}, $V_i(n)^2>C(n,i)$. By the key lemma applied as above, $V_i(n)^2\le C(j,j-i)^2$. Vandermonde's identity gives $C(2j,2(j-i))=\sum_k C(j,k)C(j,2(j-i)-k)$, in which the term $k=j-i$ equals $C(j,j-i)^2$. The number of indices $k$ giving a positive term is $2(j-i)+1\ge 3$ when $2(j-i)\le j$ and $2i+1\ge 3$ when $2(j-i)>j$, so the sum is strictly larger than that single term: $C(j,j-i)^2<C(2j,2(j-i))$. Chaining the inequalities gives the claim. Since $C(n,i)$ is strictly increasing in $n$ for $n\ge i$, the set in the definition of $N(i,j)$ is finite and the bound follows.
+\end{proof}
+
+Dependencies: Theorem \ref{thm:eees} and elementary arguments. The derivation is in \texttt{sweep/PHASE0.md} Item 2, with numerical verification there: the Vandermonde strict bound was verified for all $i<j\le 600$, and the worked example $N(10,19)=55$ was computed exactly, correcting an earlier estimate of about $51$.
+
+\begin{remark}[The reduction is per pair]
+The scope correction in \texttt{sweep/PHASE0.md} is material and is preserved throughout this paper. The reduction is finite for each fixed pair $(i,j)$; it is not finite over any region such as $i\le 1000$, $j>3i/2$. For fixed $i$, every sufficiently large $j$ has a nonempty interval: for example $N(1,10)=189$, $N(10,100)=2385$ and $N(10,1000)=260190$. Accordingly the words fully cleared are used in this paper only for a pair whose whole interval $[2j,N(i,j)]$ has been checked, and all other coverage is reported with an explicit $n$ cap. No finite sweep of this form closes the whole problem.
+\end{remark}
+
+\begin{corollary}
+If $j\le 3i/2$ then $N(i,j)<2j$: the interval is empty, and there is no counterexample with $j\le 3i/2$ and $(n,i)$ not an exception pair.
+\end{corollary}
+
+\begin{proof}
+If $j\le 3i/2$ then $2(j-i)\le i\le j$, so $C(2j,2(j-i))\le C(2j,i)\le C(n,i)$ for $2j\le n$, using monotonicity of $C(2j,\cdot)$ on $[0,j]$ and of $C(\cdot,i)$. This contradicts Theorem \ref{thm:reduction}. Consistency was verified numerically in Phase 0: $N(i,j)<2j$ for all $j\le 3i/2$ with $i\le 300$.
+\end{proof}
+
+This corollary is the skeleton of Price's $j\le 3i/2$ closure. The full closure additionally needs the exception pairs discharged, which Price's Lemma 1.3 supplies, as discussed in Section 1.3.
+
+\subsection{Standing notation for the regions}
+
+Following the campaign strategy file \texttt{strategies/S10.md} and the cycle reports, we use the following regions for $j>3i/2$.
+\begin{itemize}[leftmargin=2em]
+\item $R1$: the strip $3i/2<j<2i$.
+\item $R2$: the line $j=2i$.
+\item $R3$: the region $j>2i$.
+\end{itemize}
+A pair $(i,j)$ is closed if the conjecture is proved for that pair for all $n\ge 2j$. A triple region is closed if no counterexample triple lies in it. The distinction matters in Section 3.4, where some Cycle 2 regions are stated at triple level.
+
+For $i=3$ we also use the Euclidean notation of Price's Proposition 4.1: $n=Qj+R$ with $0\le R<j$, the row $(Q,R)$, the quantity $T=R+2(Q-1)$, the system \LDthree{} of low digit Kummer conditions derived in Cycle 1, and its higher digit refinement \LDthreeplus{} from Cycle 3. The precise definitions of \LDthree{} are in \texttt{proofs/P-A1.md}, \texttt{proofs/P-A2.md} and, in the per prime power form used for the large enumerations, in the Cycle 2 files \texttt{proofs/P-F1.md} and \texttt{proofs/P-F2.md} at items F1.15 to F1.17. The system \LDthree{} is a necessary condition for a counterexample, not a sufficient one. The system \LDthreeplus{} is treated in Section 3.6.
+
+\section{Main results}
+
+\subsection{Small cases and the boundary family}
+
+\begin{theorem}[$i=1$ and $i=2$]
+\label{thm:small}
+The conjecture holds for $i=1$ and for $i=2$, for all $j$ and all $n$.
+\end{theorem}
+
+Dependencies: unconditional. For $i\le 2$, $V_i(n)=C(n,i)$, so the key lemma applies to the whole coefficient. The full arguments are in \texttt{proofs/P-A1.md} and \texttt{proofs/P-A2.md} (items T1 and T2) and were certified in \texttt{verification/V-A.md}, which also verified both statements directly to $n\le 300$. The same closures were reproved independently by the Kummer route in \texttt{proofs/P-B1.md} and \texttt{proofs/P-B2.md}. Van Doorn and Rocca's $B_{1,2}=\emptyset$ agrees.
+
+\begin{theorem}[Boundary family]
+\label{thm:boundary}
+The family $j=\lfloor 3i/2\rfloor+1$ is closed for all $i$ and all $n$.
+\end{theorem}
+
+Dependencies: unconditional. The proof uses the square reduction $C(n,i)<C(j,j-i)^2$, which is strictly stronger than the bound Phase 0 stated, exact step ratio identities, and finite dispositions of $(4,7)$, $(6,10)$ and $(8,13)$, where the square test fails. Those three pairs are closed through the Phase 0 bounds $N=17$, $23$ and $29$ respectively, plus direct gcd checks. The family's two exception triples from the 1978 theorem are discharged directly: $\gcd(V_7(30),C(30,11))=377$ and $\gcd(V_{13}(56),C(56,20))=57293=23\cdot 47\cdot 53$. The full argument is item T3 of \texttt{proofs/P-A1.md} and \texttt{proofs/P-A2.md}, certified in \texttt{verification/V-A.md}. A point of claim discipline from Cycle 1 is recorded here: an earlier strategy claim that $(56,13,20)$ is the only in family exception triple is false; $(30,7,11)$ is a second, and both are discharged in the proofs.
+
+
+\subsection{Regime $R1$ is closed}
+
+The central Cycle 2 result is the closure of the whole strip between Price's range and the line $j=2i$.
+
+\begin{theorem}[$R1$ closed]
+\label{thm:R1}
+There is no counterexample with $3i/2<j<2i$, for any $i$.
+\end{theorem}
+
+Dependencies: Theorem \ref{thm:eees} with its exception pairs discharged, for $R1$ exactly the $9$ triples of \texttt{verification/V-H.md} Section 1.3; the $R1$ characterisation of \texttt{strategies/S10.md}; the key lemma; two cited explicit estimates, namely (D1) Dusart's bound $|\theta(x)-x|<3.965\,x/\log^2 x$ for $x\ge 2$, in the form tabulated in Broadbent et al. Corollary 11.2, which supplies valid proofs of that Dusart theorem, and (D2) Schoenfeld's bound $\theta(x)<1.000081\,x$ for $x>0$, quoted verbatim in the secondary literature; and, for the pairs $(4,7)$ and $(10,19)$ only, the finite reduction together with the completed sweep to $n\le 20{,}000$ of Section 4. Both (D1) and (D2) are used in the correct directions, and the verifier records that the conclusion survives even the weaker constant $1.001102$ in place of $1.000081$, with net margin $0.03522$. The verification levels are as stated: (D1) rests on the tabulation just described, and (D2) is at secondary level in this cycle. The full argument is in \texttt{proofs/P-H1.md} and \texttt{proofs/P-H2.md}, adjudicated and certified in \texttt{verification/V-H.md}.
+
+Proof sketch. In $R1$ a counterexample forces $V_i(n)$ to be squarefree with all prime factors in $(i,j]$. This is the $S10$ characterisation: every prime in the support is bad, its exponent is $1$, and $p=i$ is never bad. Hence $V_i(n)$ divides the primorial type product $P(i,j):=\prod_{i<p\le j}p$, and Theorem \ref{thm:eees} gives $P(i,j)\ge V_i(n)>C(n,i)^{1/2}\ge C(2j,i)^{1/2}$. Any pair with $P(i,j)^2\le C(2j,i)$ is therefore closed. This is a strict sharpening of the earlier $C(j,i)$ cap: in $R1$, $v_p(C(j,i))=1$ exactly for $i<p\le j$, so there is no multiplicity slack and the gain is pure support. The sharpening subsumes the Del Pin lever, whose $C(j,i)$ form closes exactly the pairs with $C(2j,i)\ge C(j,i)^2$.
+
+An exact scan settles all small $i$. Over all $249{,}500$ pairs in $R1$ with $i\le 1000$, the inequality $P(i,j)^2\le C(2j,i)$ fails at exactly two pairs, $(4,7)$, where $35^2=1225>C(14,4)=1001$, and $(10,19)$, where $46189^2=2133423721>C(38,10)=472733756$. The verifier extended the recount to all $999{,}000$ pairs in $R1$ with $i\le 2000$, finding $998{,}998$ holding and the same two failures. Both exceptional pairs are fully cleared in the sweep classification \texttt{pairpass\_20000.json}, with $N(4,7)=17$ and $N(10,19)=55$ recomputed.
+
+The asymptotic step covers $i\ge 1001$, so the seam between scan and analysis is gapless. At the worst corner $j\to 2i$ the relevant function takes the value $0.041408$, with net margin $0.03726$ in logarithm per unit $i$. Independent sanity checks at $i=10^4$ and $i=10^5$ give margins per unit $i$ from $0.45501$ down to $0.13281$, all positive. One presentational step, monotonicity of an error term bound, was filled by the verifier. The two provers disagreed on effectivity: one labelled its version ineffective and declined to claim closure. The verifier reproduced the effective chain step by step and certified the closure; the cautious labelling is recorded as conservative, not correct as a verdict on the combined record.
+
+The $9$ exception triples inside $R1$ are $(n,i)=(30,7)$ with $j=11,12,13$ and $(n,i)=(56,13)$ with $j=20$ to $25$. All were discharged by direct gcd computation and re-verified. Neither prover silently assumes the 1978 bound at an exception pair.
+
+\begin{corollary}
+\label{cor:jlt2i}
+With Price's closure of $j\le 3i/2$, the conjecture holds for all $j<2i$. The line $j=2i$ is not part of that range and is treated separately below.
+\end{corollary}
+
+Dependencies: Theorem \ref{thm:R1}, Price's result \cite{Price}, and Theorem \ref{thm:eees} as above.
+
+Cycle 1's flank anatomy gives useful context for why a counting argument was needed. Over $R1$ pairs with $i<40$ and $n$ in $[2j,N(i,j)]$, $10{,}317$ triples were scanned: window badness alone gives $377$ triples with at least $3$ simultaneous bad primes, with distribution $195$ triples with $3$, $166$ with $4$ and $16$ with $5$, and the maximum is $5$. Adding the key lemma cap kills none of them, and both prover files prove this is forced in $R1$: the cap equals $1$ for $p>i$ and is met with equality, while $p=i$ is vacuous. The combined cap can therefore only bite outside $R1$, a fact used in the discussion of $R3$ in Section 5. A density analysis makes the same point from the other side: on the pair $(39,59)$ the badness system has exactly $16{,}783{,}767$ favourable classes modulo $259{,}106{,}347$, of density $0.064776$, yet the reduction interval $[118,119]$ has length $2$ and both of its points satisfy all five badness conditions. Density proves abundance in long ranges and nothing in the reduction interval.
+
+\subsection{The line $j=2i$}
+
+\begin{lemma}[Strengthened exponent, Lemma S7(2.0) as proved]
+\label{lem:S7}
+With $\theta_u$ denoting the smooth part exponent of \texttt{strategies/S7.md}, one has $\theta_u\le 0.3262$ on $4i\le n\le N(i,2i)$, for all $i\ge i_0$ with $i_0=1.2\times 10^8$.
+\end{lemma}
+
+Dependencies: modulo Theorem \ref{thm:eees} and cited explicit estimates at secondary verification level in this cycle, checked by the verifier to be correctly stated. For the first prover these are Dusart's bounds for $\pi(x)$ and $\theta(x)$ and Robbins's Stirling bounds. For the second prover, whose statement is the certified one, they are Dusart's estimate $\pi(x)<x/(\log x-1.1)$ for $x\ge 60184$, at secondary level only, and a bound $|\theta(x)-x|\le 0.006788\,x/\log x$ for $x\ge 10544111$. The verifier established the provenance of the second bound: it is Dusart 1999, not Dusart 2010 as cited in the prover file. The defect is bibliographic only, with no mathematical effect. The lemma is proved independently in \texttt{proofs/P-E1.md} and \texttt{proofs/P-E2.md} and certified in \texttt{verification/V-E.md}. The first prover obtains the same lemma at weaker parameters, $i_0=2\times 10^8$, by an independent assembly. Its closure theorem has a gap in one case as filed, a factor of $2$ error in a monotonicity proof, which the verifier repairs; the statement is true and the case is subsumed by the second prover's certified closure.
+
+The certified parameters are stronger than the target set in Cycle 1, which asked for $\theta_u\le 0.36$. The margin against that budget is $\delta=0.0338$. The assembled bound was recomputed by the verifier to the pre rounding values $0.326106$, $0.355205$ and $0.413644$ for its three regimes. Empirical work, recomputed exactly by the verifier over the full window for $i\le 500$, which is $299{,}743$ points, shows the cost of the explicit estimates: the supremum of $\theta_u$ over $i\ge 50$ is $0.339629$, attained at $(378,61)$ in the file's coordinates, and over $i\ge 30$ it is $0.357355$. Exactly $40$ window pairs violate $0.36$, all at $i\le 23$, the two largest being exception pairs of the 1978 theorem, so the lemma is false for any $i_0\le 23$ and the empirical threshold is at most $30$. The verifier also records a barrier: with the cruder Rosser and Schoenfeld bound for $\pi(x)$, with coefficient $1.25506$, the binding band ratio becomes $0.4039>0.36$, so the sharp Dusart form estimates are load bearing.
+
+\begin{theorem}[The line $j=2i$ for large $i$]
+\label{thm:j2i}
+The pair $(i,2i)$ is closed for $i\ge 1.2\times 10^8$. Moreover every $j\le 2i$ is closed for $i\ge 1.7\times 10^8$.
+\end{theorem}
+
+Dependencies: Lemma \ref{lem:S7}, modulo Theorem \ref{thm:eees} and the cited explicit estimates at the verification levels stated there. The closure is item E2.15 of \texttt{proofs/P-E2.md}, certified in \texttt{verification/V-E.md}, with margin $0.0574$ for the pair $(i,2i)$, and margins $0.0277$ and $0.0062$ for the extension to all $j\le 2i$ at $i\ge 1.7\times 10^8$.
+
+After Cycle 2, the part of the original S7 residue with $j\le 2i$ that is not closed by any certified result is exactly the line $j=2i$ for $i<1.2\times 10^8$, minus the pairs and triples closed by the regions of Section 3.4 and by the finite criteria of Section 3.5.
+
+\subsection{Wedge and flank results in $R3$ and at the boundary}
+
+This subsection records the Cycle 2 Cluster G regions at the precision of \texttt{CYCLE2.md} Section 8 item (i) and the certified list in \texttt{verification/V-G.md}. All of them rest additionally on Theorem \ref{thm:eees}, the key lemma, and the anatomy of \texttt{strategies/S4.md} and \texttt{strategies/S10.md}. The analytic input is a bound for the Chebyshev function $\theta(x)$.
+
+The input is settled at primary source level. Both provers independently fetched and read Broadbent, Kadiri, Lumley, Ng and Wilk \cite{Broadbent}, Corollary 2.1, which states $\theta(x)\le (1+1.93378\times 10^{-8})x$ for all $x\ge 0$; the verifier re-fetched and confirmed the statement verbatim. Dusart's Proposition 5.1, $\theta(x)<(1+1/36260)x$ for all $x>0$, is an independent alternative, also primary verified. The verifier records that the Broadbent bound rests on cited computations verifying the Riemann hypothesis in a range, by B\"uthe and by Platt and Trudgian, used as a cited published theorem in the same way as the 1978 theorem. With $c=1+1.93378\times 10^{-8}$, the wedge constant is $K=\lceil e^{4c}\rceil=55$, with rigorous bounds $e^{4c}<54.598155$; the Dusart constant gives $e^{4c}<54.604174$ and the same $K$. No validity range adjustment is needed. Since the prime number theorem forces $c\ge 1$, $55$ is this method's integer optimum. This improves Cycle 1's wedge constant $256$, which was proved elementarily there from $\prod_{p\le x}p\le 4^x$, in \texttt{proofs/P-D1.md} and \texttt{proofs/P-D2.md}.
+
+\begin{theorem}[Certified Cluster G regions]
+\label{thm:G}
+The following regions contain no counterexample.
+\begin{enumerate}[label=(\roman*),leftmargin=2.5em]
+\item Wedge with $K=55$: $55i<n<i^2$ and $3i/2<j<2i$.
+\item Support bound closure for $i\ge 379$: $3i/2<j<2i$ and $2j\le n<i^2$, all ratios $n/i$. This subsumes item (i) and the range $n\le 256i$ for $i\ge 379$.
+\item Flank (c) sliver, all $i>256$: pairs with $C(2j,i)\ge C(j,i)^2$, the Del Pin segment $j\le j^*(i)$, are closed for all $2j\le n<i^2$. In the classified range the excess $j^*(i)-3i/2$ takes values in $\{3/2,\,2,\,5/2,\,3\}$.
+\item Flank (b), large $n$: $2i\le j\le \Gamma i$ with $n>K_\Gamma i$, where $K_\Gamma=\lceil e^{2c\Gamma}\rceil$. In particular $K_2=55$, $K_3=404$ and $K_4=2981$.
+\item Flank (b), explicit strip: $i\ge 379$, $2i\le j\le \gamma^*(i)\,i$ and $2j\le n<i^2$, where $\gamma^*(1000)=2.0509$, $\gamma^*(10^4)=2.1072$, $\gamma^*(10^5)=2.1310$, and $\gamma^*(i)$ increases to $\gamma^*_\infty=2.17178$.
+\item Flank (b), huge $i$ strip: $2i<j\le (12/5)i$, $i>e^{20}+1$ and $2j\le n<i^2$.
+\item Flank (a) shells: the exact region $n\ge i^2$, $3i/2<j<2i$ and $2M(n,i)\log n+2cj\le i\log(n/i)$, where $M=\pi(\sqrt n)-\pi(i-1)$; this includes the band $i\ge 70$, $i^2\le n<(i+1)^2$. Also the candidate bound shell $i^2\le n\le u_{\max}(i)^2 i^2$ with $u_{\max}=2.70$, $3.35$ and $4.00$ at $i=10^4$, $10^5$ and $10^6$ respectively, the worst case being $j=2i$.
+\end{enumerate}
+\end{theorem}
+
+Dependencies: as stated at the head of this subsection; Broadbent et al. Corollary 2.1 primary verified. The full statements and proofs are in \texttt{proofs/P-G1.md} and \texttt{proofs/P-G2.md}, certified in \texttt{verification/V-G.md} Section 7.
+
+Proof notes and barriers, at the precision of the files. Item (ii) was re-derived from scratch by the verifier. Its seam is sharp: the relevant function satisfies $\Psi(2,378)=-0.0000626<0$ and $\Psi(2,379)=+0.0001945>0$, with $\gamma^*(378)=1.999956$. For item (vi), the support exclusion was audited: an interval that would obstruct the argument is empty because a certain parameter exceeds $j/2$ when $j>2i$, and the numerical comparison is coefficient $0.500155653$ against the binary entropy value $H(5/24)=0.51174$, a margin of $0.0115844$. Items (v) and (vi) are incomparable. The support method has an absolute ceiling $\gamma^{**}=2.50363$ at $n=2j$: the failing inequality at $i=1000$, $\gamma=3$ is off by $148.9$ nats. For item (vii), the specification for extending the wedge to $n\ge i^2$ is exact: it needs precisely a bound $V^{\le}\le C(n,i)^\beta$ with $\beta<1/2-cj/\log C(n,i)$ for the part $V^{\le}$ supported on small primes; the candidate bound is valid but its region is only the stated shell.
+
+The barrier cartography for flank (c) is also certified and is retained because it explains the shape of the residual. In range searches, $666{,}006$ triples with $40\le i\le 170$ and $2{,}493$ triples with $40\le i\le 160$ were found where every prime of the relevant support interval is simultaneously bad. Two showcases were verified prime by prime: $(n,i,j)=(512,170,256)$ with $15$ bad primes inside its reduction interval, since $N(170,256)=515$, and $(482,157,241)$ with $16$ bad primes at $n=2j$, rescued only by $26$ primes greater than $j$. The maximum found is $18$ bad primes, at $(20350,149,251)$. For $j<2i$ these triple level regions are now also covered by the pair level closure of Theorem \ref{thm:R1}. The flank (b) and flank (a) regions, the ceiling $\gamma^{**}$, and this barrier cartography are the parts of Cluster G not subsumed by Theorem \ref{thm:R1}.
+
+Two errors in the provers' summary glosses were caught by the verifier and are corrected in the statements above. The claim that the excess in item (iii) lies in $\{1.5,2\}$ for $i\le 2000$ is false: the excess $3$ case occurs at $521$ odd values of $i$ in $[959,1999]$, smallest $i=959$ with $j$ in $\{1439,1440,1441\}$, and the correct uniform bound is excess at most $3/i$ above $3/2$. No downstream proof uses the gloss. Separately, the Rosser and Schoenfeld bound $\theta(x)<1.1x$ plays no role in Cycle 2: Cluster G superseded it with the primary verified bounds above, and its correct attribution is discussed in Section 3.5.
+
+
+\subsection{Prime gap and Kummer criteria, and the audited clearance count}
+
+Two finite criteria do most of the clearance work inside a bounded scope. Both originate in Cycle 1 and are sharpened and audited in Cycle 2. This subsection states them, records their citation status exactly, gives the MaxDKaos verdict, and then gives the audited chain of counts. Cycle 1's earlier total of $3{,}700{,}736$ cleared pairs in the same scope is superseded by the audited chain below and should not be used.
+
+\subsubsection{The prime gap criterion (S3)}
+
+A counterexample forces the interval $(n-i,n]$ to be prime free, since a prime in that interval divides $C(n,i)$ to the first power and the bookkeeping of Section 2 applies; in the files' language, it forces a straddling prime gap of at least $i+1$. Let $G$ denote the maximal prime gap function in the sense of \texttt{strategies/S3.md}: precisely, the criterion is that $i\ge G(N(i,j))$ implies the pair $(i,j)$ is fully cleared, where $N(i,j)$ is the bound of Theorem \ref{thm:reduction}. The forcing is exact, with off by one conventions checked watertight in \texttt{proofs/P-C1.md} and \texttt{proofs/P-C2.md} and certified in \texttt{verification/V-C.md}.
+
+\begin{theorem}[Prime gap regions and one unconditional family]
+\label{thm:S3}
+The pair $(i,j)$ is fully cleared whenever $i\ge G(N(i,j))$. In particular:
+\begin{enumerate}[label=(\roman*),leftmargin=2.5em]
+\item Every open pair with $i\ge 1476$ and $j\le 7.35\times 10^8$ is fully cleared.
+\item For $i\ge 132$ and $j\le 5000$, every partially covered pair in that range is cleared by the uniform form of the criterion alone.
+\end{enumerate}
+\end{theorem}
+
+Dependencies: the finite reduction; explicit prime gap estimates as follows. Item (i) uses $N<e^2j^2\le 3.9918\times 10^{18}<4\times 10^{18}$ together with the published computational theorem of Oliveira e Silva, Herzog and Pardi \cite{OeSHP} that the maximal prime gap below $4\times 10^{18}$ is $1476$, taken on trust as a published computational result. Item (ii) uses $N<e^2\cdot 5000^2/132=1399442.44$ and the record values $G(1400000)=132$, the first gap record $132$ occurring after the prime $1357201$ and the next record $148$ after $2010733$. The explicit interval inputs behind the general regions are Dusart's Proposition 6.8 of 2010, Axler's theorem \cite{Axler}, and Dusart's Corollary 5.5 of 2018 \cite{Dusart2018}. Their verification status after Cycle 2 housekeeping is exactly this: Dusart 2018, Corollary 5.5 is primary verified, read in the journal text, stating that for all $x\ge 468991632$ there is a prime $p$ with $x<p\le x(1+1/(5000\log^2 x))$, with number, threshold, constant and form all matching the campaign's use. Axler 2017, Theorem 4.1 is primary verified in version 2 of the preprint: for every $x\ge 6034256$ there is a prime $p$ with $x<p\le x(1+0.087/\log^3 x)$, together with the second clause the campaign tabulates. Citations should specify version 2, since version 1's Theorem 4.1 is a different interval. The full record is \texttt{verification/primary\_sources\_c2.md}.
+
+One prover disagreement was adjudicated in Cycle 1 and is recorded for accuracy. On which of the interval estimates is strongest, the second prover is correct: $0.087/\log^3 x\le 1/(5000\log^2 x)$ holds if and only if $\log x\ge 435$, since $0.087\cdot 5000=435$ exactly, so the Axler form is strongest only for $\log(n-i)>435$. The point is not load bearing, because the regions are proved independently.
+
+\subsubsection{The Kummer criterion (S1)}
+
+Legendre's formula gives $p^{v_p(C(n,i))}\le n$ for each prime $p$. Hence the part of $C(n,i)$ supported on primes less than $i$, the bad part in the files' terminology, is at most $n^{\pi(i-1)}$. Combined with Theorem \ref{thm:eees} this yields a clearance test for a pair, in a crude form using the displayed bound directly and in a sharp sawtooth form using the exact maximal exponent pattern. The Cycle 1 crude count is a theorem, confirmed by three independent recounts: the criterion newly clears $328{,}079$ pairs in the Cycle 1 scope. The route has a proved barrier: it cannot close any ratio $c>c^*=1.3672188\dots$ for large $i$. Consistently, the pair $(3,7)$ is provably not closable by size: its sharp bad set is the singleton $\{16\}$, with equality of the bad part and its sharp bound at $n=16$.
+
+Dependencies: Theorem \ref{thm:eees} for the comparison form; the per prime bound itself is unconditional. The arguments are in \texttt{proofs/P-B1.md} and \texttt{proofs/P-B2.md}, certified in \texttt{verification/V-B.md}, with one repairable gap recorded there: a single case in one file repeats a wrong displayed target, where the correct target repairs the proof in one line. The statement is true and no other document contains the error.
+
+For the audited count below, the sharp form must be used in its sweep relative form, denoted S20 in the files: clearance is tested relative to the completed sweep to $n\le 20{,}000$. The auditor verified the S20 theorem and its implementation, including that its candidate set is $\{20001\}$ together with the jump points $q=p^e$ and that its left edge is load bearing, with $32$ of $32$ seeded brute force pairs agreeing. The literal all $n$ sharp form adds $0$, for a reason identified in Cycle 2's error log: $2j$ itself lies in the sharp bad set at every $i\ge 4$, the diagonal barrier of \texttt{strategies/S1.md}. Any account that applies the sharp criterion in all $n$ form and reports a positive marginal is in error.
+
+\subsubsection{MaxDKaos's table does not reproduce}
+
+Cycle 2 reimplemented MaxDKaos's criterion independently, with definitions fixed exactly, anchors $G(3)=9$ and $G(5)=27$ reproduced from raw gaps, and computed values including $G(10)=122$, $G(20)=1148$, $G(100)=370360$, $G(200)=20831522$ from the campaign's own sieve to $5\times 10^7$, and $G(394)=25056082480$ from published maximal gap records. Three precisely stated candidate cut offs were tested: a crude Kummer form, a sharp form, and a sharp form augmented by exact prime free windows. The audit verifier re-ran the script end to end, reproduced all tables exactly, confirmed $G(100)$ by its own sieve, and confirmed the $i=3$ settled set under the third candidate by direct enumeration.
+
+\begin{proposition}[Non-reproduction, audited]
+\label{prop:maxdkaos}
+Of MaxDKaos's seven tabulated values, only $i=3$ giving $j\le 5$ reproduces, under the crude candidate only. Every other entry is not reproduced under any of the three candidates. No count beyond the pair $(3,5)$ under the crude candidate is credited.
+\end{proposition}
+
+The computed values behind the verdict include, in the order crude, sharp, sharp plus windows: at $i=5$, claimed $12$ against computed $8$, $9$, $9$; at $i=10$, claimed $30$ against $22$, $25$, $26$; at $i=20$, claimed $138$ against $77$, $116$, $116$; at $i=100$, claimed $25063$ against $15060$, $22587$, $23305$; at $i=200$, claimed $713421$ against $432029$, $658087$, $658087$; at $i=394$, claimed $360654145$ against $232615486$, $331301695$, $331301695$. The diagnostic in the files is that the claimed $j$ would be settled if and only if the first gap greater than $i$ sat between $1.084$ and $1.481$ times further out than it does, for every $i\ge 5$. The asymptotic form $j\le C\,i\log^2 i$ is not strictly refuted: seven finite points cannot refute an asymptotic with unspecified constant and onset, and the ratio $j/(i\log^2 i)$ grows by four orders of magnitude across the table for both the claimed and the computed values. The full record is \texttt{verification/maxdkaos\_reimplementation.md}, audited in \texttt{verification/V-U.md}. This supersedes the earlier filing of the table as promising but unproven: under every natural reconstruction of the stated ingredients, the table is not merely unproved but too large.
+
+\subsubsection{The audited clearance chain in scope}
+
+Fix the scope $i\le 1000$, $\lfloor 3i/2\rfloor<j\le 5000$, containing $4{,}249{,}500$ pairs. The baseline is now the cap $20{,}000$ sweep classification of Section 4, which clears $1{,}302{,}183$ pairs in scope, every row a clean prefix. The audited certified chain, in the order computed, is as follows. Marginals are order dependent; the union is not.
+
+\begin{center}
+\begin{tabular}{lrr}
+Step & Marginal & Running cleared\\
+\hline
+(1) Cap $20{,}000$ sweep baseline & $1{,}302{,}183$ & $1{,}302{,}183$\\
+(2) S3 uniform, $i\ge 132$ & $+2{,}383{,}028$ & $3{,}685{,}211$\\
+(3) S1 crude & $+17{,}085$ & $3{,}702{,}296$\\
+(4) S1 sharp, sweep relative S20 form & $+123{,}949$ & $3{,}826{,}245$\\
+(5) S3 per pair, $i\le 131$, after S20 & $+88{,}849$ & $3{,}915{,}094$\\
+(6) Primorial $R1$ criterion & $+0$ & $3{,}915{,}094$\\
+(7) Row $i=3$ by \LDthree{} to $5000$ & $+4{,}212$ & $3{,}919{,}306$\\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{theorem}[Audited clearance in scope]
+\label{thm:counts}
+In the scope above, $3{,}919{,}306$ of $4{,}249{,}500$ pairs are fully cleared. Exactly $330{,}194$ partial pairs remain, all at rows $4\le i\le 113$, each with $j$ above a frontier $F_i$ satisfying $F_i\ge 2i$.
+\end{theorem}
+
+Dependencies: the finite reduction, the completed sweep, and the criteria of Sections 3.2, 3.5.1, 3.5.2 and 3.6, at the verification levels stated there. This is a theorem about the finite scope relative to the reduction and the sweep; it is not a proof of the conjecture in that scope by pure thought. The audit is \texttt{verification/V-U.md} over \texttt{verification/counts\_c2.py}, \texttt{verification/counts\_c2.md} and \texttt{verification/counts\_c2.json}: the auditor verified the arithmetic, re-ran the counting program end to end with the regenerated output identical and no mismatches, and recomputed step (5) per pair, finding rows $100$ to $131$ exact at every row, rows $114$ to $131$ fully cleared, and $49$ of $49$ sampled pairs below $100$ agreeing.
+
+Notes on the steps, from the audit file. Step (2)'s marginal fell from Cycle 1's $2{,}891{,}106$ because the deeper sweep already owned $508{,}078$ of those pairs. Step (5)'s per pair prime gap clearances finish rows $114$ to $131$ entirely. Step (6) is $+0$ in scope for a proved reason: the primorial criterion fails in scope only at $(4,7)$ and $(10,19)$, both already baseline cleared, and every in scope $R1$ pair has $N(i,j)$ at most about $6.4i\le 6400<20000$ and was already sweep cleared. The value of the primorial lever is as the proof of Theorem \ref{thm:R1}, not as a count. Step (7) is exactly $5000-788=4212$: the S20 chain's row $3$ frontier before \LDthree{} is $788$. The residual frontier table is in \texttt{verification/counts\_c2.md}; samples are $F_4=180$, $F_5=399$, $F_{10}=410$, $F_{50}=1616$, $F_{100}=3746$ and $F_{113}=4586$. Every residual pair has $j>F_i\ge 2i$ by a wide margin, consistently with Theorem \ref{thm:R1}: no residual pair lies in the range of $R1$. Against Cycle 1, the union is a superset and newly clears $218{,}570$ pairs in scope.
+
+A citation status note belongs here. The Rosser and Schoenfeld bound $\theta(x)<1.1x$ is not used by any result in this paper. Housekeeping established that it is partially verified at secondary level only, with a bibliographic correction: the openly readable secondary quote attributes the sharper bound $\theta(x)<1.01624x$ for $x>0$ to Rosser and Schoenfeld's Theorem 9 of the 1962 paper \cite{RS1962}, not to the 1975 paper with which it had been conflated. The primary text was not sighted in that pass. Nothing depends on it.
+
+
+\subsection{The case $i=3$}
+
+The case $i=3$ is the smallest open case of the whole problem and the only infinite case left by Van Doorn and Rocca's work. This subsection collects the Cycle 2 and Cycle 3 results. The headline is negative and is stated plainly: $i=3$ is not closed.
+
+\subsubsection{First closures and the odd case}
+
+Cycle 1 closed the pairs $(3,5)$ and $(3,6)$ for all $n$, reduced the general case to the system \LDthree{} together with side conditions, and isolated the splitting configurations. Del Pin's verified lemma also settles $(3,5)$, as recorded in Section 1.5. The pinned configuration, called SPLIT-odd in the files, is $n$ odd, $v_3(n)=1$ and $j=n/3$.
+
+\begin{theorem}[SPLIT-odd closed]
+\label{thm:splitodd}
+No counterexample with $i=3$ has $n$ odd, for any $j$.
+\end{theorem}
+
+Dependencies: Price's Proposition 4.1 \cite{Price}, extracted as in Section 1.3. No input from Theorem \ref{thm:eees} is used. The result is certified by two independent routes in \texttt{proofs/P-F1.md} and \texttt{proofs/P-F2.md}, verified in \texttt{verification/V-F.md}. In the pinned case, Proposition 4.1 with $(Q,R)=(3,0)$ and $T=4$ gives $V_3(n)\mid 3j$, while the pinned bookkeeping gives $V_3(n)=jU_1U_2$ with $\gcd(U_1U_2,3)=1$, forcing $U_1=U_2=1$. The two files give independent endgames from that point, edge cases included. The second file also contains its own Kummer proof of Proposition 4.1 at $i=3$. This is exactly the label retaining argument that Van Doorn and Rocca's diagnosis said a completion would need.
+
+Cycle 2 also closed four even subfamilies, $(Q,R)$ in $\{(2,2),(3,0),(3,2),(4,0)\}$, and proved the exclusion of any relevant prime power factor of $n-1$ above $(n-1)/3$. A worked row illustrates the method and was verified exactly: in row $(4,2)$, Proposition 4.1 plus the $n-1$ argument leaves precisely the candidates $(n,j)=(22,5)$, $(46,11)$ and $(106,26)$, each killed per instance by \LDthree{}, with $\gcd(\Vthree,C(n,j))=77$, $69$ and $371$ respectively. Here and below $\Vthree$ without qualification in the $i=3$ files denotes the odd part of $C(n,3)$ where the files so define it in the relevant argument; the coordinator's independent check recomputed $\gcd(C(n,3),C(n,j))=154$, $276$ and $742$, whose odd parts are exactly the filed values.
+
+Two comparison results delimit a natural method. First, Del Pin's condition at $i=3$, $C(2j,3)\ge C(j,3)^2$, holds if and only if $j\le 5$, so there is no extension there. Second, the $V_3$ refined comparison closes $(3,j)$ for all $n\ge 2j$ with $v_2(C(n,3))\le 3$, the ratio $C(2j,3)/C(j,3)=8+12/(j-2)>8$ doing the work. The suggestion that largeness of $v_2$ closes pairs is false, with sharpness example $(n,j)=(16,7)$, where $v_2=4$ and the odd part satisfies $V_3(16)=35=C(7,3)$. Cycle 3 settles this method completely, in Theorem \ref{thm:comparison} below.
+
+\subsubsection{The band $T\le 16$ is closed}
+
+Recall $n=Qj+R$ with $0\le R<j$ and $T=R+2(Q-1)$.
+
+\begin{theorem}[Band closure]
+\label{thm:band}
+The system \LDthree{} has no even solution in any of the $64$ rows with $T\le 16$, for any $j$. In particular no counterexample with $i=3$ has $T\le 16$: a counterexample must satisfy $T\ge 17$.
+\end{theorem}
+
+Dependencies: the reconciled residual statement \RESthree{} of \texttt{proofs/P-I1.md} Claim I1.1, the per row finiteness and elimination arguments of \texttt{proofs/P-I1.md} and \texttt{proofs/P-I2.md}, the certified per pair frontier of Theorem \ref{thm:frontier3} in its Cycle 2 form to $j\le 5000$ as used in the first route, and finite candidate lists. The theorem is certified in \texttt{verification/V-I.md}. Two independent routes prove the counterexample form: per row finiteness plus the $j\le 5000$ frontier plus finite candidate lists, and the same finiteness table plus an elimination lemma. The stronger \LDthree{} solution form is proved by the elimination lemma of the second file, audited line by line; the first file's refusal to claim \LDthree{} solution closure is a correct statement about its own Proposition 4.1 method, not a counter argument, and the two files do not contradict each other. All $88$ candidate disposals across both files, $68$ in the first and $20$ in the second, were independently recomputed with no survivor and no surviving gap. The elimination lemma was additionally stress tested on $1{,}282{,}474$ candidate pairs with zero failures; the prover's own stress tests covered $1{,}492{,}091$ assignment instances, also with zero failures.
+
+The validation in row $(4,2)$ reproduced the Cycle 2 record exactly by both routes, with the complete candidate list and gcd values stated in Section 3.6.1. Two slips in the earlier record's row table were flagged and confirmed, neither material: row $(3,4)$ has $T=8$, not $7$, and row $(5,2)$ has $T=10$, not $8$.
+
+\subsubsection{The exact $2$-adic characterisation}
+
+\begin{theorem}[$v_2$ law]
+\label{thm:v2}
+For every $v\ge 2$, the set $\{n : v_2(C(n,3))\ge v\}$ is exactly the five residue classes $\{0,\,1,\,2,\,2^v,\,2^v+2\}$ modulo $2^{v+1}$. In row $Q$, a counterexample forces $v_2(C(n,3))\ge \mathrm{vmin}(Q):=\lfloor 3\log_2 Q\rfloor+1$.
+\end{theorem}
+
+Dependencies: unconditional; Legendre and Kummer, through the identity $v_2(C(n,3))=s_2(n-3)+2-s_2(n)$, where $s_2$ is the binary digit sum. The theorem is proved independently in \texttt{proofs/P-J1.md} and \texttt{proofs/P-J2.md} and certified in \texttt{verification/V-J.md}. The five classes have density $5/2^{v+1}$. At $v=4$ the classes are $\{0,1,2,16,18\}$ modulo $32$; for even $n$, $v_2\ge 4$ holds if and only if $16\mid n$ or $16\mid (n-2)$. The per row values begin $\mathrm{vmin}(2)=4$, $\mathrm{vmin}(3)=5$, $\mathrm{vmin}(4)=7$.
+
+Intersecting the exact law with the residual conditions yields congruences on $j$ in each row. A certified negative accompanies it: no contradiction and no row closure arises from the $v_2$ congruences alone, because each row's system has solutions with $j$ arbitrarily large. The coordinator verified the $v=4$ law by direct computation for $n\le 5000$ with zero mismatches, in both the modulo $32$ form and the even $n$ form. Two defects in the prover files are logged in \texttt{verification/V-J.md}, neither load bearing: a conditional proportion printed with the wrong exponent in one corollary, the correct value being $2^{2-v}$ for even $n$, while the absolute densities used downstream are correct; and one claim with a gap as filed in a single omitted case, the statement being true with the verifier's repair and having no downstream effect. A universal sentence in the second file is false, refuted at the row $(4,2)$, but its embedded computation is proved and the claim is not used downstream.
+
+\begin{theorem}[Comparison method exhausted at $i=3$]
+\label{thm:comparison}
+The $V_3$ refined comparison closes the full pair $(3,j)$, for all $n$, exactly at $j$ in $\{5,6,10\}$. For $j\ge 19$ the power of two witness $n=2^{\lceil\log_2 2j\rceil}$ blocks the comparison, and the table for $5\le j\le 18$ was recomputed entry for entry. The single top comparison closes nothing further.
+\end{theorem}
+
+Dependencies: the comparison argument of \texttt{proofs/P-F1.md} at item F1.13, completed in \texttt{proofs/P-J1.md} and \texttt{proofs/P-J2.md} and certified in \texttt{verification/V-J.md}. The auxiliary bound $2^{v_2(C(n,3))}\le n$, proved by both provers, upgrades the $j=6$ and $j=10$ closures to all $n\ge 2j$ with no input from Theorem \ref{thm:eees}. This settles the gap left open in Cycle 2, where the corresponding final sentence of the earlier file was unproved as filed. Its correct form is the theorem above: the full closing set of the comparison method at $i=3$ is exactly $\{5,6,10\}$.
+
+\subsubsection{Row closures and the higher digit system}
+
+Cycle 3 Cluster J also gives row closures by a squared bound, labelled computation in the files and fully re-verified.
+
+\begin{proposition}[Row closures, computation]
+\label{prop:rows}
+For counterexamples with $i=3$, the following rows are closed: all $Q=2$ rows with even $R\le 22$, odd $R$ being closed globally by Theorem \ref{thm:splitodd}; all $Q=3$ rows with $R\le 20$; all $Q=4$ rows with even $R\le 18$; $Q=5$ rows with $R\le 16$; $Q=6$ rows with $R=0$ and $3\le R\le 14$; and $h=0$ rows at any $Q$ with $T\le 24$, including some rows at $7\le Q\le 11$.
+\end{proposition}
+
+Dependencies: computation, fully re-verified in \texttt{verification/V-J.md} Section 6. A hybrid comparison in the second prover file is uniformly sharper than the squared bound in their overlap and corroborates these closures but does not extend them: at the boundary rows $(2,22)$, $(3,19)$, $(3,20)$ and $(4,18)$ the hybrid bounds $22394$, $14930$, $14930$ and $11198$ respectively exceed the old frontier while the squared bound criterion closes the rows. After Cluster J alone the first open rows are $(2,24)$, $(3,21)$ and $(4,20)$, each with an explicit finite window; Section 5 records that the coordinator combination with the $n\le 10^8$ frontier closes those three rows as well.
+
+The higher digit refinement \LDthreeplus{} sharpens \LDthree{} digit by digit. Cycle 3 Cluster L determines its exact logical position.
+
+\begin{theorem}[Position of \LDthreeplus{}]
+\label{thm:ldplus}
+The low digit part of \LDthreeplus{}, on digits $0$ to $a-1$ in the files' notation, is exactly \LDthree{}; all genuinely new content is a high digit tail condition. The solution set of the full \LDthreeplus{} system, quantifying over exactly the primes $p\ge 3$ dividing $C(n,3)$, is exactly the set of counterexamples. Hence $(\mathrm{H3^+})$ if and only if $i=3$ is closed, where $(\mathrm{H3^+})$ is the statement, as defined in the files, that \LDthreeplus{} has no solution $(n, j)$ with $3 < j \le n/2$; $(\mathrm{H3})$ implies $(\mathrm{H3^+})$, where $(\mathrm{H3})$ is the corresponding statement for \LDthree{}; and the converse is open. No general shrinkage of the residual class by \LDthreeplus{} beyond \LDthree{} is proved, and no residual configuration is exhibited that \LDthreeplus{} excludes beyond \LDthree{}.
+\end{theorem}
+
+Dependencies: \texttt{proofs/P-L1.md} and \texttt{proofs/P-L2.md}, certified in \texttt{verification/V-L.md} with verdict (b) for both provers, in the files' labelling. Instance level strength is real but does not yield a proved closure: in a census at $n\le 2000$ covering $4{,}711{,}997$ prime instances, all figures independently reproduced, the low condition fails $4{,}182{,}943$ instances, and of the $529{,}054$ low passing instances the tail condition decides $303{,}253$, that is $57.3$ percent. A consequence for the residual is that the even case now turns precisely on $(\mathrm{H3^+})$ restricted to \RESthree{} with $T\ge 17$, a statement about counterexamples themselves rather than about the possibly larger class of \LDthree{} solutions.
+
+\begin{lemma}[Lemma L3.1]
+\label{lem:L31}
+In any $h=0$ row, an even $n$ counterexample with $i=3$ satisfies $n-1\mid 3\Lambda_3(T)$.
+\end{lemma}
+
+Dependencies: \texttt{proofs/P-L1.md}, certified in \texttt{verification/V-L.md}. Here $\Lambda_3(T)$ is as in Price's Proposition 4.1 at $i=3$. The lemma ties the residual in those rows to a fixed finite quantity per row while $n$ grows, and is one of the two concrete starting points named in Section 5. A second concrete channel is recorded in the same verification: dropping the $p=3$ clauses, the remaining \LDthree{} system has exactly $12$ solutions at $n\le 10^6$ among $26{,}035{,}963$ pairs tested, namely $(n,j)=(3^a+1,(3^a+1)/2)$ for $a=2$ to $12$ and $(162,70)$. All $12$ are killed by the $p=3$ low clause, but $8$ of the $12$ are excluded by the primes at least $5$ higher digits alone, a channel independent of the $3$ low clause. This is labelled computation in the files, reproduced exactly. No new pair closures result.
+
+The per pair and survivor frontiers for $i=3$ are computation and are stated with the other computations in Section 4.3. The exact residual for $i=3$ is assembled in Section 5.1.
+
+
+\section{Computation}
+
+All computation in the campaign used exact integer arithmetic and the Python standard library only. The sweep code, its checkpoints, its summaries and its provenance record are in the repository under \texttt{sweep/}. The adversarial review of the sweep is \texttt{sweep/REVIEW.md}: it found no silent miss and contradicted no claim in \texttt{sweep/RESULTS.md} in substance, and the fixes and disclosures it required are appended to that file. Production history is in \texttt{sweep/PROVENANCE.md}.
+
+\subsection{Method}
+
+For each $n$, prime support bitmasks of $C(n,k)$ for $k\le n/2$ are built incrementally through a smallest prime factor sieve. A triple fails if the support of $C(n,i)$ restricted to primes at least $i$ and the support of $C(n,j)$ are disjoint. Any flagged triple would have been re-verified by direct gcd before being recorded; none was flagged in either sweep. Before production, the bitmask verdicts were compared against direct gcd computation, with Legendre exponents, on all $568{,}820$ triples with $n\le 240$ in both regions, with $0$ mismatches. Pair classification uses the reduction directly: $N(i,j)\le N^*$ if and only if $C(N^*+1,i)\ge C(2j,2(j-i))$, since $C(n,i)$ is strictly increasing in $n$, and $C(2j,2(j-i))$ is strictly increasing in $j$ for fixed $i$, so each row's cleared set is a prefix located by exact binary search. The boundary was verified in exact arithmetic for every $i$, and the classification was cross checked against direct computation of $N(i,j)$ on $150$ seeded random pairs in each classification run, with $0$ mismatches. The independent checker shares no machinery with the sweep: it uses exact binomial coefficients and extracts $V_i(n)$ by dividing out all prime factors less than $i$.
+
+The sweeps were checkpointed in blocks. The first sweep was interrupted by a machine restart after $62$ of its $100$ blocks and resumed from on disk checkpoints with no block recomputed. The extension sweep was likewise resumed from $173$ validated checkpoints. After the review, the checkpoint loader validates every checkpoint it loads and aborts on any mismatch, and a planted forgery test confirms rejection.
+
+\subsection{The two sweeps}
+
+\begin{theorem}[Sweep to $n\le 10{,}000$, computation]
+\label{thm:sweep1}
+No counterexample exists among the $27{,}769{,}446{,}111$ open region triples $(n,i,j)$ with $n\le 10{,}000$, $1\le i<j\le n/2$ and $j>3i/2$. Of the $4{,}249{,}500$ pairs with $1\le i\le 1000$, $j>3i/2$ and $2j\le 10000$, exactly $768{,}741$ are fully cleared for all $n$ by the reduction, and $3{,}480{,}759$ are partially covered.
+\end{theorem}
+
+Dependencies: computation, recorded in \texttt{sweep/sweep\_summary\_10000.json} and \texttt{sweep/RESULTS.md}. The triple total was independently reproduced by a closed form count of the same index set, the two counts agreeing exactly; the closed form evidence is deposited as \texttt{sweep/count\_closed\_form\_10000.txt}. The $12$ exception pairs were discharged directly by the independent checker: $41$ triples, all with gcd greater than $1$, with $(9,4)$ and $(10,5)$ vacuous. The checker's other tasks re-verified $18$ fully cleared pairs over their complete intervals, $39{,}982$ triples in all, sampled $1{,}996$ random open region triples and $498$ random closed region triples, all with gcd greater than $1$. The sampling bias of the cleared pair task is disclosed in the addendum to \texttt{sweep/RESULTS.md}: the $18$ pairs are budget fitting pairs among $300$ examined, biased toward shorter intervals, and the task is a spot re-verification, not an estimator, so the bias affects no conclusion.
+
+\begin{theorem}[Sweep to $n\le 20{,}000$, computation]
+\label{thm:sweep2}
+No counterexample exists among the $222{,}188{,}892{,}222$ open region triples with $n\le 20{,}000$. In the classification over $33{,}330{,}000$ pairs considered, exactly $8{,}021{,}170$ pairs are fully cleared and $25{,}308{,}830$ are partial.
+\end{theorem}
+
+Dependencies: computation, recorded in \texttt{sweep/sweep\_summary\_20000.json} and the completion addendum to \texttt{sweep/RESULTS.md}. All $200$ blocks finished. The total equals the closed form figure in \texttt{sweep/count\_closed\_form\_20000.txt} exactly. The flagged and confirmed lists are both empty. The classification output is \texttt{pairpass\_20000.json} in the campaign workspace, summarised in \texttt{sweep/RESULTS.md}.
+
+The extension sweep carries a pre-registered prediction, which is part of its evidential value. Before the run finished, the file \texttt{sweep/threshold\_prediction\_20000.txt} predicted that the fully cleared count in the sub scope $i\le 1000$, $j\le 5000$ would be $1{,}302{,}183$. The measured count computed from the classification matched exactly. An independent spot check, in \texttt{sweep/spotcheck\_20000.json}, took a seeded random sample, seed $20261029$, of $300$ open region triples with $n$ in $(10000,20000]$ and recomputed each by direct gcd with $V_i(n)$ evaluated by Legendre exponents in exact arithmetic: all $300$ had gcd greater than $1$ and $0$ were coprime, consistently with the sweep.
+
+What the sweeps do not establish is as important as what they do. They clear the open region for $n$ up to their caps only. Pairs are fully cleared only when their whole reduction interval lies under the cap. No finite sweep of this form closes the problem, because the per pair intervals grow without bound.
+
+\subsection{Cycle 3 enumerations at $i=3$}
+
+\begin{theorem}[$i=3$ frontiers, computation]
+\label{thm:frontier3}
+The following hold by verified computation.
+\begin{enumerate}[label=(\roman*),leftmargin=2.5em]
+\item \LDthree{} has no solution with $2j\le n\le N(3,j)$ for every $5\le j\le 50{,}000$. Hence, by the finite reduction, every pair $(3,j)$ with $5\le j\le 50{,}000$ is closed for all $n$. In total $5{,}653{,}872$ pairs $(n,j)$ were clause tested across the range.
+\item \LDthree{} has zero survivors at even $n\le 10^8$. In the window $3<j\le n/2$, $922{,}011{,}091$ candidate pairs were tested with zero survivors.
+\item Targeted high $v_2$ families to $n\le 10^{12}$, comprising $14{,}055$ values of $n$, produced exactly one candidate pinned by congruences, $(n,j)=(16,7)$, which fails \LDthree{}, and zero candidates with $j>5000$.
+\end{enumerate}
+\end{theorem}
+
+Dependencies: computation, verified in \texttt{verification/V-K.md} over \texttt{proofs/P-K1.md} and \texttt{proofs/P-K2.md}. Both computers' scripts were re-run end to end by the verifier, and the mandated ranges were recounted by the verifier's own independent implementations, with no discrepancy in any count anywhere. For item (i) the verifier recounted $1{,}536{,}591$ pairs in full on $5001\le j\le 20000$ plus one full block beyond it, the remaining blocks being covered by the two independent implementations, both re-run. For item (ii) the verifier recounted in full to $10^7$ under both counting conventions, plus a segmented recount on $(10^7,2\times 10^7]$, plus the exact convention reconciliation to $10^8$: the alternative count $922{,}010{,}906$ in the convention $j\ge 7$ differs by exactly the $185$ pairs with $j$ in $\{4,5,6\}$. For the step from \LDthree{} to pair closure in item (i), the sole exception pair of the 1978 theorem at $i=3$ is $(8,3)$, which admits no $j\ge 5$. The aggregate form of \LDthree{} used for the large enumerations was proved equivalent to the per prime power form in the verification and validated empirically before use, and independently by exhaustive comparison on $6{,}974{,}250$ pairs plus a sample of $225{,}841$ pairs, with zero disagreements.
+
+Cycle 2's corresponding frontiers were $j\le 5000$ and zero survivors for $n\le 10^6$, so Cycle 3 moves both frontiers by a factor of ten. The method note certified in the files should be retained: the direct per pair method's honest reach ends at $j\le 50{,}000$, because the per pair cost grows like $N(3,j)$, which is of order $j^3$, and the binding constraint was enumeration size, not any mathematical obstruction. A survivor of \LDthree{}, had one appeared, would not have been a counterexample, since \LDthree{} is necessary and not sufficient. None appeared. The coordinator confirmed independently that $(16,7)$ is not a counterexample: $\gcd(C(16,3),C(16,7))=80$, sharing the prime $5\ge 3$.
+
+\section{The residual}
+
+\subsection{The exact residual for $i=3$}
+
+Assembling \texttt{CYCLE3.md} Section 7, an $i=3$ counterexample, if one exists, must satisfy all of the following, each item verifier certified in the file cited there.
+
+\begin{enumerate}[label=(\arabic*),leftmargin=2.5em]
+\item $n$ even; $n>10^8$; $j\ge 50{,}001$; $2j\le n$.
+\item $v_2(C(n,3))\ge 4$, in exact form $n\bmod 32$ in $\{0,2,16,18\}$, equivalently $16\mid n$ or $16\mid (n-2)$.
+\item Writing $n=Qj+R$ with $0\le R<j$: $T:=R+2(Q-1)\ge 17$, and in row $Q$, $v_2(C(n,3))\ge \lfloor 3\log_2 Q\rfloor+1$.
+\item \RESthree{}: the reconciled necessary conditions of \texttt{proofs/P-I1.md} Claim I1.1, namely the label bound with full tracking of which of $n$, $n-1$, $n-2$ supplies each prime power of $C(n,3)$, and the corresponding data for $C(n,j)$, in per row form, together with the exact $v_2$ condition, parity and size conditions.
+\item \LDthreeplus{}: equivalently, $(n,j)$ is a solution of the full higher digit system, which by Theorem \ref{thm:ldplus} is exactly the counterexample condition at digit level; and in any $h=0$ row, $n-1\mid 3\Lambda_3(T)$ by Lemma \ref{lem:L31}.
+\item The row $(Q,R)$ is not among the certified closures: $T\le 16$ for all rows; $Q=2$ with even $R\le 22$; $Q=3$ with $R\le 20$; $Q=4$ with even $R\le 18$, odd $R$ at $Q$ in $\{2,4\}$ and all odd $n$ being excluded by Theorem \ref{thm:splitodd}; $Q=5$ with $R\le 16$; $Q=6$ with $R=0$ or $3\le R\le 14$; $h=0$ rows at any $Q$ with $T\le 24$.
+\item Rows $(2,24)$, $(3,21)$ and $(4,20)$ are also closed, by a coordinator combination and not as a prover claim: the certified finite windows for those rows have largest $n$ values $2{,}561{,}032$, $2{,}561{,}031$ and $2{,}561{,}032$ respectively, all below $10^8$, and Theorem \ref{thm:frontier3} certifies that \LDthree{} has no solution, hence no counterexample, with even $n\le 10^8$. The coordinator verified this arithmetic directly.
+\end{enumerate}
+
+The first open rows by the certified criteria are now $(5,17)$ and $(6,15)$ at $T=25$, then $(3,22)$ at $T=26$ and $(2,26)$ and $(4,22)$ at $T=28$, together with all rows at $Q\ge 7$ not covered by item (6). One labelling tension is adjudicated in the files: the Cluster J verification lists rows $(6,1)$ and $(6,2)$ as open, which is correct at the level of that cluster's own criteria. At the counterexample level both rows have $T=11$ and $T=12$, at most $16$, and are closed by Theorem \ref{thm:band}; row $(6,1)$ in any case has $n$ odd throughout, so Theorem \ref{thm:splitodd} applies. A mechanical re-tabulation of the squared bound windows against the new $10^8$ frontier would close further rows beyond item (7); that re-tabulation has not been verifier certified and is not claimed here.
+
+What is not proved for $i=3$ should be stated with equal precision. The case $i=3$ is not closed for any $j\ge 50{,}001$ or any even $n>10^8$. The statements $(\mathrm{H3})$ and $(\mathrm{H3^+})$ are both open, now localised to \RESthree{} with $T\ge 17$ outside the closures above. No general theorem excludes \LDthree{} or \LDthreeplus{} solutions in the residual class. The rows with $T\ge 17$ are not known to be finite in number per row beyond the per row finiteness used in Section 3.6.2, and no uniform bound covering all residual rows is proved. The converse implication from $(\mathrm{H3^+})$ to $(\mathrm{H3})$ is open: the residual class could in principle contain \LDthree{} solutions that are not counterexamples.
+
+\subsection{The residual for the whole problem}
+
+Independently of $i=3$, the following remain open, following \texttt{CYCLE2.md} Section 8 and \texttt{CYCLE3.md} Section 9.
+
+\begin{enumerate}[label=(\roman*),leftmargin=2.5em]
+\item Regime $R3$, $j>2i$, in general, outside the certified sub regions of Theorem \ref{thm:G} (the strips and shells for $i\ge 379$ with $n<i^2$, the wedge ranges $n>K_\Gamma i$ for $\Gamma\le 4$, and the huge $i$ strip) and outside the in scope finite criteria of Section 3.5. The in scope residue is the $330{,}194$ pairs at rows $4\le i\le 113$, all with $j$ above a frontier at least $2i$.
+\item The line $j=2i$ for $i<1.2\times 10^8$ in general, outside the ranges of Theorem \ref{thm:G} and the finite criteria. For $j<2i$ there is nothing left at any $i$, by Price's work and Theorem \ref{thm:R1}.
+\item Flank (a) beyond the shells of Theorem \ref{thm:G} item (vii), and flank (c) at $257\le i\le 378$ as a triple region statement beyond the sliver. Its pairs are closed by Theorem \ref{thm:R1}; the wedge and support methods alone do not reach it.
+\item The finite ineffective band $4\le i\le 1475$ of Van Doorn and Rocca \cite{VDRpartial}, which is disjoint in method from the effective regions above: their result gives finiteness without an effective bound, while the campaign's in scope criteria give explicit exclusions for the pairs they reach. Neither replaces the other.
+\end{enumerate}
+
+The analytic closures of Theorems \ref{thm:R1} and \ref{thm:j2i} are modulo the cited published explicit estimates listed with them, several at secondary verification level, all checked to be correctly stated by the verifiers. The wedge and support bounds of Theorem \ref{thm:G} are modulo Broadbent et al. Corollary 2.1, which itself rests on cited computations verifying the Riemann hypothesis in a range. The 1978 theorem is a cited published theorem throughout.
+
+\subsection{What a finishing proof must supply}
+
+Following \texttt{CYCLE3.md} Section 10, what remains for $i=3$ is a single mathematical idea, not more computation: an argument that excludes \RESthree{} configurations with $T\ge 17$, using the label data, which of $n$, $n-1$, $n-2$ supplies each prime power. Equivalently, by Theorem \ref{thm:ldplus}, it is a proof of $(\mathrm{H3^+})$ on that class. The campaign's evidence about where such an argument must live is consistent across all three cycles. Exponent only, or size only, arguments provably stall here, which is Van Doorn and Rocca's diagnosis confirmed at every step: the squared and hybrid bounds, the $v_2$ congruences and the comparison tests each close exactly a bounded initial segment and no more, and the support method in $R3$ has the proved ceiling $\gamma^{**}=2.50363$ of Section 3.4. The two most concrete starting points in the record are Lemma \ref{lem:L31}, the divisibility $n-1\mid 3\Lambda_3(T)$ in $h=0$ rows, which ties the residual to a fixed finite quantity per row while $n$ grows, and the primes at least $5$ higher digit channel of Section 3.6.4, which independently excludes $8$ of the $12$ near solutions of the system with the $p=3$ clauses dropped and has no proved theory yet. The same moral applies in $R3$ beyond $i=3$: the combined cap that provably cannot bite inside $R1$ is an $R3$ specific tool, and size and support arguments cannot finish $R3$ beyond their ceiling, so a non size input is required there as well.
+
+Computation can extend the frontiers further, at steep cost. At $i=3$ each further factor of ten in the per pair frontier costs roughly a factor of $10^3$ in enumeration. The verifiers' unanimous assessment, which the coordinator shares and which this paper adopts, is that the residual class will not fall to enumeration.
+
+\section{Verification and reproducibility}
+
+The campaign method was uniform across cycles. Each cluster had two independent provers who did not see each other's work, and one independent verifier who classified every numbered claim as proved, gap, false or open. Housekeeping computations had an additional independent audit verifier. Only verifier certified files count as the record. That rule was load bearing twice in Cycle 2, when interim agent summaries carried figures that appeared in no file, in one case arithmetically impossible figures; the certified files, independently recounted, contained the correct values in both cases, and the false figures are logged in \texttt{CYCLE2.md} Section 7. Defects found by verifiers are preserved in the cycle reports rather than silently corrected, and this paper has carried the material ones into its statements: a bibliographic misattribution corrected to Dusart 1999, a false summary gloss on the Del Pin excess corrected to the values in Theorem \ref{thm:G}, a false final sentence on the comparison method replaced by Theorem \ref{thm:comparison}, and the non-reproduction verdict of Proposition \ref{prop:maxdkaos}.
+
+The repository accompanying this paper contains the full record. The \texttt{proofs/} directory holds the prover documents cited throughout, the \texttt{verification/} directory holds the verification reports, the independent recounts and the primary source verification file, the \texttt{sweep/} directory holds the Phase 0 gate record, the sweep code, summaries, classifications, spot checks, provenance and review, and the top level holds the coordinator reports \texttt{CYCLE1.md}, \texttt{CYCLE2.md} and \texttt{CYCLE3.md}, the refereeing in \texttt{REFEREE.md} with its addendum, and the graded literature file \texttt{EXTERNAL\_CLAIMS\_2026-10-29.md}. The file \texttt{REPRODUCE.md} in the repository gives the reproduction route for the computations. A reader who wishes to check any theorem in Section 3 should start from the repository pointer given with that theorem, read the verifier's classification of the relevant claims, and only then read the prover files.
+
+Nothing in this paper, alone or together with the cited literature, proves Erd\H{o}s Problem \#699. The problem remains open, with the residual stated exactly in Section 5.
+
+
+\begin{thebibliography}{99}
+
+\bibitem{EEES78}
+E.~F. Ecklund Jr., R.~B. Eggleton, P.~Erd\H{o}s and J.~L. Selfridge,
+On the prime factorization of binomial coefficients,
+\emph{Journal of the Australian Mathematical Society, Series A} 26(3) (1978), pages 257 to 269.
+Cited as a published theorem throughout. Statement, convention and the list of $12$ exception pairs verified against the paper and by independent computation, \texttt{sweep/PHASE0.md} Item 4.
+
+\bibitem{Price}
+L.~Price (GPT 5.6 Sol Pro),
+Common Prime Divisors of Binomial Coefficients.
+Manuscript retrieved from the erdosproblems forum, 2026.
+Proves $j\le 3i/2$ and $n=2j$; Lemma 1.3 discharges the EEES78 exception pairs; Proposition 4.1 is used in Sections 1.3 and 3.6; Appendix A code for the finite part of the central case reproduced exactly by the campaign, \texttt{REFEREE.md} addendum.
+
+\bibitem{VDRpartial}
+W.~van Doorn and S.~Rocca,
+Partial Progress on Erd\H{o}s Problem \#699.
+Manuscript retrieved 2026-10-29. Follows \cite{Price} throughout; $i\ge 1476$ closed, $4$ to $1475$ finite but ineffective, $i=3$ open. Checkable core verified exactly in \texttt{EXTERNAL\_CLAIMS\_2026-10-29.md}. An audited revision under Rocca's sole authorship has the same proofs, constants and tables.
+
+\bibitem{VDRstrict}
+W.~van Doorn and S.~Rocca,
+Binomial coefficients sharing a large prime divisor.
+Manuscript submitted 2026-07-25, retrieved 2026-10-29. The strict variant with a common prime greater than $i$; a different finish line from Problem \#699.
+
+\bibitem{Dusart2018}
+P.~Dusart,
+Explicit estimates of some functions over primes,
+\emph{Ramanujan Journal} 45 (2018), pages 227 to 251.
+Corollary 5.5 primary verified, \texttt{verification/primary\_sources\_c2.md}.
+
+\bibitem{Axler}
+C.~Axler,
+New estimates for some functions defined over primes,
+arXiv:1703.08032v2, 2017.
+Theorem 4.1 primary verified in version 2; version 1 has a different Theorem 4.1.
+
+\bibitem{Broadbent}
+S.~Broadbent, H.~Kadiri, A.~Lumley, N.~Ng and K.~Wilk,
+Sharper bounds for the Chebyshev function $\theta(x)$,
+arXiv:2002.11068.
+Corollary 2.1 primary verified; Corollary 11.2 tabulates the Dusart bound used as (D1) in Theorem \ref{thm:R1}.
+
+\bibitem{OeSHP}
+T.~Oliveira e Silva, S.~Herzog and S.~Pardi,
+Empirical verification of the even Goldbach conjecture and computation of prime gaps up to $4\cdot 10^{18}$, 2014.
+Cited for the maximal prime gap $1476$ below $4\times 10^{18}$, taken on trust as a published computational theorem.
+
+\bibitem{Guy}
+R.~K. Guy,
+\emph{Unsolved Problems in Number Theory}, 2004.
+Problem B31 catalogues the strict variant counterexample at $(28,5,14)$ originating with Erd\H{o}s and Szekeres, as recorded in \texttt{EXTERNAL\_CLAIMS\_2026-10-29.md}.
+
+\bibitem{RS1962}
+J.~B. Rosser and L.~Schoenfeld,
+Approximate formulas for some functions of prime numbers,
+\emph{Illinois Journal of Mathematics} 6 (1962), pages 64 to 94.
+Not used by any result in this paper. Recorded only for the corrected attribution of the bound $\theta(x)<1.01624x$, at secondary level through Garcia and Lee as quoted in \texttt{verification/primary\_sources\_c2.md}.
+
+\end{thebibliography}
+
+\end{document}

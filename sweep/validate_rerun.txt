@@ -1,0 +1,4 @@
+Rerun 2026-10-28 (Stage 1, review finding M2): python3 validate.py
+---
+triples compared: 568820, mismatches: 0
+exit code: 0

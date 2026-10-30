@@ -1,0 +1,13 @@
+{
+  "seed": 20261029,
+  "sample_size": 300,
+  "n_range": [
+    10001,
+    20000
+  ],
+  "region": "1 <= i < j <= n//2 and 2j > 3i (open region)",
+  "method": "direct gcd(V_i(n), C(n,j)); V_i via Legendre exponents, exact bigint",
+  "coprime_triples_found": [],
+  "all_gcd_gt_1": true,
+  "runtime_s": 2.52
+}

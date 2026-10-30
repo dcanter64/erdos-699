@@ -1,0 +1,2 @@
+sanity, NSTAR=10000 sub-scope count: 768741
+PREDICTION, NSTAR=20000, sub-scope i<=1000, j<=5000: fully cleared pairs = 1302183
