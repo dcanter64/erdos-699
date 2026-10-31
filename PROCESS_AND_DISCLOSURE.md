@@ -22,7 +22,7 @@ Computation throughout was exact Python integer arithmetic, Python standard libr
 
 ## AI disclosure
 
-Model: Meta Muse. Process: an agentic fan out in which a coordinator briefed independent prover agents, verifier agents checked their work claim by claim, and further agents ran and recounted the computations; the coordinator then wrote reports only from the verifier certified files.
+Model: Meta Muse (Wonder). Process: an agentic fan out in which a coordinator briefed independent prover agents, verifier agents checked their work claim by claim, and further agents ran and recounted the computations; the coordinator then wrote reports only from the verifier certified files.
 
 No human mathematician has refereed these results, and no Lean formalisation exists. No part of the results has been formalised in Lean, and formalisation is not being pursued unless a mathematician working on the problem asks for it.
 
